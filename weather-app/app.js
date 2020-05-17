@@ -5,7 +5,9 @@ const mapBoxUrl = 'https://api.mapbox.com/geocoding/v5/mapbox.places/Los%20Angel
 
 request({ url: url, json: true }, (error, response) => {
   if (error) {
-      console.log('Unable to connect to weather service.')
+    console.log('Unable to connect to weather service.')
+  } else if (response.body.error) {
+    console.log('Unable to find location')
   } else {
     const data = response.body.current;
     const weatherCast = response.body.current.weather_descriptions[0];
@@ -17,7 +19,13 @@ request({ url: url, json: true }, (error, response) => {
 });
 
 request({ url: mapBoxUrl, json: true }, (error, response) => {
+    if (error) {
+      console.log('Unable to connect to geocoding service')
+    } else if (response.body.features.length === 0){
+      console.log('Sorry, there were no matching results. Please try a different location.')
+    } else {
     const latitude = response.body.features[0].center[1];
     const longitude = response.body.features[0].center[0];
     console.log(latitude, longitude)
+    }
 })
